@@ -1,0 +1,8 @@
+{
+  "name": "josiasange37/songo-game",
+  "description": "Jeu de Songo multijoueur en temps réel",
+  "type": "project",
+  "require": {
+    "php": ">=8.0"
+  }
+}

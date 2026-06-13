@@ -1,33 +1,12 @@
-// ===================================================
-// Auteur: AKANA SIGNING JOSIAS AARON | Matricule: 24H2358
-// Fichier: .htaccess
-// Configuration du serveur web pour le projet Songo (compatible Windows/Apache)
-// ===================================================
+DirectoryIndex index.html
 
-<IfModule mod_rewrite.is>
+<IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteRule ^$ index.html [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^(.*)$ $1 [L]
 </IfModule>
 
-# Préserver le type de contenu JSON pour server.php
-<IfModule mod_mime.c>
-    AddType application/json json
-    AddType application/json php
-</IfModule>
-
-# Configuration de la taille maximale des requêtes (optionnel)
-# ServerLimit 10
-
-# Configuration de gestion du cache pour le fichier d'état JSON
 <IfModule mod_headers.c>
-    <Files state.json>
-        Header unset Cache-Control
-        Header set Cache-Control "max-age=1"
-    </Files>
+    <FilesMatch "\.json$">
+        Header set Cache-Control "max-age=0, no-cache"
+    </FilesMatch>
 </IfModule>
-
-# Journalisation pour le diagnostic (optionnel)
-# ErrorLog "logs/error.log"
-# CustomLog "logs/access.log" combined

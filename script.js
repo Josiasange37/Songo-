@@ -1,21 +1,13 @@
-// ===================================================
-// Auteur: AKANA SIGNING JOSIAS AARON | Matricule: 24H2358
-// Fichier: script.js (v2_remote) - Affichage et selection du joueur
-// ===================================================
+var mon_id = -1;
 
-var mon_id = -1; // identifiant du joueur (-1 = pas choisi)
-
-// Selection du joueur
-function choisirJoueur(id) {
-    mon_id = id;
-    document.getElementById('choix_joueur').style.display = 'none';
-    document.getElementById('zone_jeu').style.display = 'block';
-    document.getElementById('mon_role').innerHTML = "Joueur " + (id + 1) + (id == 0 ? " (Bas)" : " (Haut)");
-    demarrerPolling(); // demarrer le rafraichissement (defini dans ajax.js)
-}
-
-// Affichage du plateau recu du serveur
 function afficher(etat) {
+    if (!etat || etat.erreur) return;
+
+    if (etat.en_attente) {
+        document.getElementById('info_tour').innerHTML = "En attente du second joueur...";
+        return;
+    }
+
     var haut = document.getElementById('ligne_haut');
     var bas = document.getElementById('ligne_bas');
     haut.innerHTML = "";

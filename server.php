@@ -1,43 +1,74 @@
 <?php
-// ===================================================
-// Auteur: AKANA SIGNING JOSIAS AARON | Matricule: 24H2358
-// Fichier: server.php (v2_remote) - Serveur PHP pour XAMPP
-// Gere la logique du jeu: semaille, prises, tours, fin de partie.
-// ===================================================
-
 header('Content-Type: application/json');
-$fichier = 'state.json';
+if (!is_dir('rooms')) mkdir('rooms', 0777, true);
+$action = $_GET['action'] ?? '';
 
-// --- INITIALISATION OU RESET ---
-if (!file_exists($fichier) || (isset($_GET['action']) && $_GET['action'] == 'reset')) {
+// --- CREER UNE PARTIE ---
+if ($action == 'creer') {
+    $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    $code = '';
+    for ($i = 0; $i < 6; $i++) $code .= $chars[rand(0, strlen($chars) - 1)];
+    $fichier = 'rooms/' . $code . '.json';
+    if (!is_dir('rooms')) mkdir('rooms', 0777, true);
     $init = array(
         "le_plateau" => array(5,5,5,5,5,5,5, 5,5,5,5,5,5,5),
         "les_scores" => array(0, 0),
         "joueur_qui_joue" => 0,
-        "le_gagnant" => null
+        "le_gagnant" => null,
+        "joueurs" => array(false, false)
     );
     file_put_contents($fichier, json_encode($init));
-    if (isset($_GET['action']) && $_GET['action'] == 'reset') {
-        echo json_encode(array("statut" => "ok"));
-        exit;
-    }
+    echo json_encode(array("code" => $code));
+    exit;
 }
 
-// Lire l'etat
+$code = $_GET['code'] ?? '';
+$fichier = 'rooms/' . $code . '.json';
+
+// --- REJOINDRE UNE PARTIE ---
+if ($action == 'rejoindre') {
+    if (!file_exists($fichier)) { echo json_encode(array("erreur" => "Code invalide!")); exit; }
+    $etat = json_decode(file_get_contents($fichier), true);
+    if ($etat['joueurs'][0] && $etat['joueurs'][1]) { echo json_encode(array("erreur" => "Partie pleine!")); exit; }
+    $joueur = $etat['joueurs'][0] ? 1 : 0;
+    $etat['joueurs'][$joueur] = true;
+    file_put_contents($fichier, json_encode($etat));
+    echo json_encode(array("joueur" => $joueur));
+    exit;
+}
+
+if (!file_exists($fichier)) { echo json_encode(array("erreur" => "Partie introuvable")); exit; }
 $etat = json_decode(file_get_contents($fichier), true);
+$en_attente = !$etat['joueurs'][0] || !$etat['joueurs'][1];
 
 // --- RECUPERER L'ETAT ---
-if (isset($_GET['action']) && $_GET['action'] == 'recuperer_etat') {
-    echo json_encode($etat);
+if ($action == 'recuperer_etat') {
+    $retour = $etat;
+    $retour['en_attente'] = $en_attente;
+    echo json_encode($retour);
+    exit;
+}
+
+// --- RESET ---
+if ($action == 'reset') {
+    $init = array(
+        "le_plateau" => array(5,5,5,5,5,5,5, 5,5,5,5,5,5,5),
+        "les_scores" => array(0, 0),
+        "joueur_qui_joue" => 0,
+        "le_gagnant" => null,
+        "joueurs" => $etat['joueurs']
+    );
+    file_put_contents($fichier, json_encode($init));
+    echo json_encode(array("statut" => "ok"));
     exit;
 }
 
 // --- JOUER ---
-if (isset($_GET['action']) && $_GET['action'] == 'jouer') {
+if ($action == 'jouer') {
     $trou = intval($_GET['trou']);
     $joueur = intval($_GET['joueur']);
 
-    // Validations
+    if ($en_attente) { echo json_encode(array("erreur" => "En attente du second joueur...")); exit; }
     if ($etat['le_gagnant'] !== null) { echo json_encode(array("erreur" => "Jeu fini!")); exit; }
     if ($joueur != $etat['joueur_qui_joue']) { echo json_encode(array("erreur" => "Pas ton tour!")); exit; }
     if ($etat['le_plateau'][$trou] == 0) { echo json_encode(array("erreur" => "Trou vide!")); exit; }
@@ -49,7 +80,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'jouer') {
     $suivant = array(7,0,1,2,3,4,5, 8,9,10,11,12,13,6);
     $precedent = array(1,2,3,4,5,6,13, 0,7,8,9,10,11,12);
 
-    // Semaille
     $n = $plateau[$trou];
     $plateau[$trou] = 0;
     $pos = $trou;
@@ -60,7 +90,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'jouer') {
         $n--;
     }
 
-    // Prises
     $chezAdv = ($joueur == 0 && $pos >= 7) || ($joueur == 1 && $pos <= 6);
     $interdit = ($joueur == 0) ? 7 : 0;
 
@@ -80,7 +109,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'jouer') {
         $scores[$joueur] += $total;
     }
 
-    // Fin de partie
     $reste = array_sum($plateau);
     if ($reste < 10 || $scores[0] >= 40 || $scores[1] >= 40) {
         for ($i = 0; $i <= 6; $i++) { $scores[0] += $plateau[$i]; $plateau[$i] = 0; }
@@ -88,7 +116,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'jouer') {
         $etat['le_gagnant'] = ($scores[0] > $scores[1]) ? 0 : (($scores[1] > $scores[0]) ? 1 : -1);
     }
 
-    // Mise a jour
     $etat['le_plateau'] = $plateau;
     $etat['les_scores'] = $scores;
     if ($etat['le_gagnant'] === null) $etat['joueur_qui_joue'] = 1 - $joueur;
@@ -98,5 +125,4 @@ if (isset($_GET['action']) && $_GET['action'] == 'jouer') {
     exit;
 }
 
-// Action inconnue
 echo json_encode(array("erreur" => "Action inconnue"));

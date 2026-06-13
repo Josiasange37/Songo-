@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: songo-game
+    env: php
+    buildCommand: composer install --no-dev --optimize-autoloader
+    startCommand: apache2-foreground
+    healthCheckPath: /
+    envVars:
+      - key: APP_ENV
+        value: production

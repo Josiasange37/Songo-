@@ -1,0 +1,5 @@
+rooms/*.json
+state.json
+.DS_Store
+Thumbs.db
+*.log

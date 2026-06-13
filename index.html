@@ -3,19 +3,34 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Songo - Multi Joueur</title>
-    <!-- Auteur: AKANA SIGNING JOSIAS AARON | Matricule: 24H2358 -->
+    <title>Songo - Deux Joueurs</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Le Jeu de Songo</h1>
-    
-    <div id="choix_joueur">
-        <h2>Qui es-tu ?</h2>
-        <button class="btn" onclick="choisirJoueur(0)">Joueur 1 (Bas)</button>
-        <button class="btn" onclick="choisirJoueur(1)">Joueur 2 (Haut)</button>
+
+    <div id="ecran_accueil">
+        <h2>Mode de jeu</h2>
+        <button class="btn" onclick="montrerCreer()">Créer une partie</button>
+        <button class="btn" onclick="montrerRejoindre()">Rejoindre une partie</button>
     </div>
-    
+
+    <div id="ecran_creer" style="display:none;">
+        <h2>Partie créée!</h2>
+        <p style="color:var(--muted);margin-bottom:10px;">Partage ce code avec l'autre joueur:</p>
+        <div id="code_affichage" class="code-box"></div>
+        <p id="attente_msg" style="color:var(--muted);margin-top:15px;">En attente d'un joueur...</p>
+        <button class="btn" onclick="annulerPartie()" style="background:var(--danger);">Annuler</button>
+    </div>
+
+    <div id="ecran_rejoindre" style="display:none;">
+        <h2>Rejoindre une partie</h2>
+        <input id="code_input" class="input-code" placeholder="Code" maxlength="6" autocomplete="off">
+        <button class="btn" onclick="rejoindrePartie()">Rejoindre</button>
+        <div id="erreur_code" style="color:var(--danger);margin-top:10px;"></div>
+        <button class="btn" onclick="retourAccueil()" style="background:var(--board);">Retour</button>
+    </div>
+
     <div id="zone_jeu" style="display:none;">
         <h3>Role: <span id="mon_role"></span></h3>
         <h2 id="info_tour">Chargement...</h2>
