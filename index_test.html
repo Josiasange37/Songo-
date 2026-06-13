@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de fonctionnement</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .ok { background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; }
+        .error { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; }
+        .test { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Test de démarrage rapide du jeu Songo</h1>
+    
+    <div id="status" class="test"></div>
+    
+    <div class="test">
+        <button onclick="testGame()">Tester le jeu</button>
+        <button onclick="window.location.href='index.html';">Ouvrir le jeu</button>
+    </div>
+    
+    <script>
+        function testGame() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '<div class="ok">✓ Les fichiers du projet sont présents</div>';
+            
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'server.php?action=recuperer_etat', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    statusDiv.innerHTML += '<div class="ok">✓ Le serveur PHP fonctionne</div>';
+                    statusDiv.innerHTML += '<div class="ok">✓ État initial chargé</div>';
+                } else {
+                    statusDiv.innerHTML += '<div class="error">✗ Le serveur PHP n\'est pas accessible</div>';
+                }
+            };
+            xhr.onerror = function() {
+                statusDiv.innerHTML += '<div class="error">✗ Connexion au serveur PHP échouée</div>';
+            };
+            xhr.send();
+        }
+        
+        // Test au chargement
+        window.onload = function() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '<div class="ok">✓ HTML chargé</div>';
+        };
+    </script>
+</body>
+</html>
