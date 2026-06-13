@@ -70,6 +70,9 @@ function retourAccueil() {
 }
 
 function demarrerPartie() {
+    hide('ecran_creer');
+    hide('ecran_accueil');
+    hide('ecran_rejoindre');
     show('zone_jeu');
     document.getElementById('mon_role').innerHTML = "Joueur " + (mon_id + 1) + (mon_id == 0 ? " (Bas)" : " (Haut)");
     demarrerPolling();
