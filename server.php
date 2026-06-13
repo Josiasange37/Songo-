@@ -15,7 +15,7 @@ if ($action == 'creer') {
         "les_scores" => array(0, 0),
         "joueur_qui_joue" => 0,
         "le_gagnant" => null,
-        "joueurs" => array(false, false)
+        "joueurs" => array(true, false)
     );
     file_put_contents($fichier, json_encode($init));
     echo json_encode(array("code" => $code));
