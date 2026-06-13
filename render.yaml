@@ -1,10 +1,6 @@
 services:
   - type: web
     name: songo-game
-    env: php
-    buildCommand: composer install --no-dev --optimize-autoloader
-    startCommand: apache2-foreground
+    env: docker
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /
-    envVars:
-      - key: APP_ENV
-        value: production
