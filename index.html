@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Songo - Multi Joueur</title>
+    <!-- Auteur: AKANA SIGNING JOSIAS AARON | Matricule: 24H2358 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Le Jeu de Songo</h1>
+    
+    <div id="choix_joueur">
+        <h2>Qui es-tu ?</h2>
+        <button class="btn" onclick="choisirJoueur(0)">Joueur 1 (Bas)</button>
+        <button class="btn" onclick="choisirJoueur(1)">Joueur 2 (Haut)</button>
+    </div>
+    
+    <div id="zone_jeu" style="display:none;">
+        <h3>Role: <span id="mon_role"></span></h3>
+        <h2 id="info_tour">Chargement...</h2>
+        <div id="message_erreur"></div>
+        <div class="plateau">
+            <div class="ligne" id="ligne_haut"></div>
+            <div class="ligne" id="ligne_bas"></div>
+        </div>
+        <div class="scores">
+            <div class="score-card"><p>Joueur 2 (Haut)</p><span id="score_j2">0</span></div>
+            <div class="score-card"><p>Joueur 1 (Bas)</p><span id="score_j1">0</span></div>
+        </div>
+        <button class="btn-reset" onclick="recommencer()">Nouvelle Partie</button>
+    </div>
+
+    <div class="footer">AKANA SIGNING JOSIAS AARON (24H2358)</div>
+    <script src="ajax.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
